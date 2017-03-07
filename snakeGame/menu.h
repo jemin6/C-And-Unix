@@ -18,9 +18,8 @@ class menuclass{
         int maxheight;
         char partchar;
         char oldalchar;
-        char etel;
-	
-	void getinput();
+        char etel;	
+	void getInput();
 public:
         menuclass();
         ~menuclass();
