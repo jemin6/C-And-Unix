@@ -13,7 +13,7 @@ class menuclass{
         bool get;
         //indicates the current direction of the snake
         char input;
-
+	bool instructionOpen;
         int maxwidth;
         int maxheight;
         char partchar;

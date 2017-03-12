@@ -48,13 +48,16 @@ snakeclass::snakeclass()
 
 
         // initial values
-        levelpoints = 20; // amount of points required to reach the next level
+        levelpoints = 500; // amount of points required to reach the next level
         combo = 1;
         points=0;
         level = 0;
         del=110000;
         get=0;
         direction='l';
+        input = ' ';
+        pauser = ' ';
+        speedctrl = ' ';
         srand(time(NULL));
 
         // default size for the game window (within the larger terminal window)
@@ -85,7 +88,7 @@ bool snakeclass::levelcheck()
 
                         usleep(del);
                         getkey();
-                        if (direction == 'y')
+                        if (input == 'y')
                         {
                                 clear();
                                 snakeclass s;
@@ -245,6 +248,16 @@ void snakeclass::place(food *placefood)
                         if(snake[i].x==tmpx && snake[i].y==tmpy)
                                 continue;
 
+                // checks to ensure that food/poison doesn't spawn directly in front of the snake
+                for(int i=-3; i<3; i++)
+                {
+                        for (int j=-3; j<3; j++){
+                                if (snake[0].x == tmpx + i && snake[0].y == tmpy + j)
+                                        continue;
+                        }
+
+                }
+
                 // makes sure the food doesn't spawn on an existing poison
                 for (int i = 0; i < poisontrack.size(); i++)
                         if (poisontrack[i].x == tmpx && poisontrack[i].y == tmpy)
@@ -351,7 +364,7 @@ void snakeclass::gameover()
         while(1)
         {
                 usleep(del);
-                if (direction == 'y'){
+                if (input == 'y'){
                         //restart the game
                         clear();
                         refresh();
@@ -359,7 +372,7 @@ void snakeclass::gameover()
                         s.start(1,0);
                         break;
                 }
-                else if (direction == 'n'){
+                else if (input == 'n'){
                         //close the game
                         endwin();
                         exit(0);
@@ -376,34 +389,53 @@ void snakeclass::getkey(){
         switch(tmp)
         {
                 case KEY_LEFT:
-                        if(direction!='r')
-                                direction='l';
+                        if(direction != 'r')
+                                direction = 'l';
                         break;
                 case KEY_UP:
-                        if(direction!='d')
-                                direction='u';
+                        if(direction != 'd')
+                                direction = 'u';
                         break;
                 case KEY_DOWN:
-                        if(direction!='u')
-                                direction='d';
+                        if(direction != 'u')
+                                direction = 'd';
                         break;
                 case KEY_RIGHT:
-                        if(direction!='l')
-                                direction='r';
+                        if(direction != 'l')
+                                direction = 'r';
                         break;
                 case KEY_BACKSPACE:
-                        direction='q';
+                        input = 'q';
                         break;
                 case 'y':
-                        direction='y';
+                        input = 'y';
                         break;
                 case 'n':
-                        direction='n';
+                        input = 'n';
                         break;
                 case 'q':
-                        direction='q';
-                case 'r':
-                        direction='r';
+                        input = 'q';
+                        break;
+                case 'p':
+                        move(maxheight-1,minwidth+41);
+                        printw("~[ PAUSED ]~");
+                        refresh();
+                        while(1){
+                                pauser = getch();
+                                if(pauser == 'p')
+                                {
+                                        printtext();
+                                        move(maxheight-1,minwidth+41);
+                                        printw("            ");
+                                        break;
+                                }
+                                else if(pauser == 'q')
+                                {
+                                        endwin();
+                                        exit(1);
+                                }
+                        }
+                        break;
         }
 
 
@@ -441,11 +473,12 @@ void snakeclass::movesnake()
 void snakeclass::start(int inplevel, int inpoverallscore)
 {
 
+        // input level and overall score from previous level
         level = inplevel;
         overallscore = inpoverallscore;
-        getspeed();
 
         // place initial snake, board, score line, speed, foods, and poison
+        getspeed();
         getdimensions();
         placeboard();
         placesnake();
@@ -453,6 +486,10 @@ void snakeclass::start(int inplevel, int inpoverallscore)
         printtext();
 
         refresh();
+
+
+
+
 
         while(1)
         {
@@ -462,13 +499,17 @@ void snakeclass::start(int inplevel, int inpoverallscore)
                         break;
                 }
                 movesnake();
-                if (direction == 'q')                           //exit
+                if (input == 'q')
+                {                               //exit
                         break;
+                }
 
                 if (levelcheck() == true)
                         break;
                 usleep(del);                    //Linux delay
         }
+        endwin();
+        exit(1);
 
 }
 

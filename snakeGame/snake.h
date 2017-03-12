@@ -19,11 +19,11 @@ struct food{
 };
 
 class snakeclass{
-        int points,del;
+        int points,del,speed_multiplier;
         //indicates that the snake get food (it makes the snake longer)
         bool get;
         //indicates the current direction of the snake
-        char direction;
+        char direction, input, pauser, speedctrl;
 
         // tracks the window sizing features of the game
         int height, width, minwidth, minheight, maxwidth, maxheight, termwidth, termheight;

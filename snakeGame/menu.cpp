@@ -27,6 +27,8 @@ menuclass::~menuclass()
 
 void menuclass::menu()
 {
+
+	instructionOpen = false;
         int tmp=getch();
         while(1){
                 if(input == 'e'){
@@ -41,9 +43,21 @@ void menuclass::menu()
                         break;
                 }
                 if(input == 'r'){
-                        clear();
-                        readInstruction();
-                        break;
+			if (instructionOpen == false)
+			{
+                        	clear();
+                        	readInstruction();
+                        }
+		}
+		if(input == 'b'){
+			if (instructionOpen == true)
+			{
+				clear();
+				title();
+				mainInstruction();
+				refresh();
+				instructionOpen = false;
+			}
                 }
                 getInput();
                 usleep(del);
@@ -66,6 +80,9 @@ void menuclass::getInput()
                 case 'r':
                         input='r';
                         break;
+		case 'b':
+			input='b';
+			break;
         } //End switch statement
 } // End void getInput() function
 
@@ -111,6 +128,7 @@ void menuclass::mainInstruction()
 
 void menuclass::readInstruction()
 {
+	instructionOpen = true;
         move(maxheight/2-10, maxwidth/2-39);
         printw("***********************************************************************");
         move(maxheight/2-9, maxwidth/2-39);
@@ -130,16 +148,18 @@ void menuclass::readInstruction()
         move(maxheight/2-1,maxwidth/2-39);
         printw("* 2. Use your cursor keys: up, left, right, and down.                 *");
         move(maxheight/2,maxwidth/2-39);
-        printw("* 3. Eat the food, try to score as high as you can.                   *");
+        printw("* 3. Eat the food, try to eat combo to score higher points            *");
         move(maxheight/2+1,maxwidth/2-39);
-        printw("* 4. Enjoy the game, and be the best player.                          *");
+        printw("* 4. Enjoy the game!                                                  *");
         move(maxheight/2+2,maxwidth/2-39);
-        printw("*                                                                     *");
+        printw("* 5. If you need to pause press <p>                                   *");
         move(maxheight/2+3,maxwidth/2-39);
+        printw("*                                                                     *");
+        move(maxheight/2+4,maxwidth/2-39);
         printw("***********************************************************************");
 
         move(maxheight/2+5,maxwidth/2-39);
-        printw(" SELECT (e) to play, (q) to quit, (b) to check the highest score       ");
+        printw(" SELECT <e> to play the game, <b> to go back to the main, <q> to quit  ");
 
 } //End instruction()
 
