@@ -51,7 +51,7 @@ snakeclass::snakeclass()
 
 
         // initial values
-        levelpoints = 20; // amount of points required to reach the next level
+        levelpoints = 500; // amount of points required to reach the next level
         combo = 1;
         points=0;
         level = 0;
