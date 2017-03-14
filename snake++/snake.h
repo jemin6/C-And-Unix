@@ -3,8 +3,16 @@
 #include <ncurses.h>
 #include <cstdlib>
 #include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <future>
+
+#include "highscore.h"
+
 #ifndef SNAKE_H
 #define SNAKE_H
+
+
 struct snakepart{
         int x,y;
         snakepart(int col, int row);
@@ -19,7 +27,10 @@ struct food{
 };
 
 class snakeclass{
-        int points,del,speed_multiplier;
+
+
+
+        int points,del,increment;
         //indicates that the snake get food (it makes the snake longer)
         bool get;
         //indicates the current direction of the snake
@@ -50,6 +61,9 @@ class snakeclass{
         bool collision(); // returns true for game over, also handles food collisions
         void movesnake();
         void addpoints();
+        void minspeed();
+        void maxspeed();
+        void getdefaultspeed();
         void getspeed();
         bool levelcheck(); // checks to see if conditions are met to move to the next level
         void placeboard();
@@ -59,7 +73,8 @@ class snakeclass{
         void printtext();
         void getdimensions();
         void getkey();
-        void gameover();
+        bool gameover();
+        bool savescore();
 
 public:
         snakeclass();
@@ -68,4 +83,3 @@ public:
 };
 
 #endif
-

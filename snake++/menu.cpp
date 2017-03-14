@@ -1,19 +1,17 @@
 #include "menu.h"
-#include "snake.h"
 
 using namespace std;
 
 menuclass::menuclass()
 {
+        clear();
         initscr();
         nodelay(stdscr,true); //if none key pressed don't wait for keypress
         keypad(stdscr,true);  //init the keyboard
         noecho();             //don't write
         curs_set(0);          //cursor invisible
         getmaxyx(stdscr,maxheight,maxwidth);
-        del=110000;
-        get=0;
-        input=' ';
+
         title();        // Prints the title
         mainInstruction();  //Print the instruction
 }//End menuclass()
@@ -28,63 +26,49 @@ menuclass::~menuclass()
 void menuclass::menu()
 {
 
-	instructionOpen = false;
+        submenuOpen = false;
         int tmp=getch();
         while(1){
-                if(input == 'e'){
-                        clear();
-                        snakeclass s;        //snakeclass
-                        s.start(1, 0);           //Start snakeclass
-                        break;
-                }
-                if (input == 'q'){
-                        endwin();
-                        exit(0);
-                        break;
-                }
-                if(input == 'r'){
-			if (instructionOpen == false)
-			{
-                        	clear();
-                        	readInstruction();
+
+                input = getch();
+
+                if (submenuOpen == false)
+                {
+                        if(input == 'e'){
+                                clear();
+                                s.start(1, 0);           //Start snakeclass
+                                break;
                         }
-		}
-		if(input == 'b'){
-			if (instructionOpen == true)
-			{
-				clear();
-				title();
-				mainInstruction();
-				refresh();
-				instructionOpen = false;
-			}
+                        if (input == 'q'){
+                                endwin();
+                                exit(0);
+                                break;
+                        }
+                        if(input == 'r'){
+                                clear();
+                                readInstruction();
+                                refresh();
+                        }
+                        if(input =='h'){
+                                clear();
+                                highScore();
+                                refresh();
+                        }
                 }
-                getInput();
-                usleep(del);
+
+                if (submenuOpen == true)
+                {
+                        if(input == 'b'){
+                                clear();
+                                title();
+                                mainInstruction();
+                                refresh();
+                                submenuOpen = false;
+                        }
+                }
         } // End while loop
+
 } // End void menu() function
-
-
-void menuclass::getInput()
-{
-        //detect key
-        int tmp=getch();
-        switch(tmp)
-        {
-                case 'e':
-                        input='e';
-                        break;
-                case 'q':
-                        input='q';
-                        break;
-                case 'r':
-                        input='r';
-                        break;
-		case 'b':
-			input='b';
-			break;
-        } //End switch statement
-} // End void getInput() function
 
 void menuclass::title()
 {
@@ -116,10 +100,12 @@ void menuclass::mainInstruction()
         move(maxheight/2+3, maxwidth/2-30);
         printw("-----------------------------------------------------");
         move(maxheight/2+4,maxwidth/2-30);
-        printw("         <e>                 To start the game!      ");
+        printw("         <e>                 Start                   ");
         move(maxheight/2+5,maxwidth/2-30);
-        printw("         <r>                 Read game rules!        ");
+        printw("         <r>                 Rules                   ");
         move(maxheight/2+6,maxwidth/2-30);
+        printw("         <h>                 High Scores             ");
+        move(maxheight/2+7,maxwidth/2-30);
         printw("         <q>                 Exit                    ");
         refresh();
 } // End mainInstruction()
@@ -128,7 +114,7 @@ void menuclass::mainInstruction()
 
 void menuclass::readInstruction()
 {
-	instructionOpen = true;
+        submenuOpen = true;
         move(maxheight/2-10, maxwidth/2-39);
         printw("***********************************************************************");
         move(maxheight/2-9, maxwidth/2-39);
@@ -152,14 +138,40 @@ void menuclass::readInstruction()
         move(maxheight/2+1,maxwidth/2-39);
         printw("* 4. Enjoy the game!                                                  *");
         move(maxheight/2+2,maxwidth/2-39);
-        printw("* 5. If you need to pause press <p>                                   *");
-        move(maxheight/2+3,maxwidth/2-39);
         printw("*                                                                     *");
-        move(maxheight/2+4,maxwidth/2-39);
+        move(maxheight/2+3,maxwidth/2-39);
         printw("***********************************************************************");
 
         move(maxheight/2+5,maxwidth/2-39);
-        printw(" SELECT <e> to play the game, <b> to go back to the main, <q> to quit  ");
+        printw("Press <b> to return to the main menu");
 
 } //End instruction()
 
+void menuclass::highScore()
+{
+
+        submenuOpen = true;
+        highscores = h.load();
+
+        // starting point for printing high score
+        int startrow = (maxheight/2) - (h.numscores/2);
+        int startcol = (maxwidth/2) - 5;
+
+        move (startrow - 2, startcol);
+        printw("High Scores: ");
+
+        for (int i = 0; i < h.numscores; i++)
+        {
+                move(startrow + i,startcol);
+				if (i < 9)
+						printw(" ");
+                printw("%d. ", i+1);
+                if (i < highscores.size())
+                        printw("%d - %s", highscores[i].score, highscores[i].name.c_str());
+
+        }
+
+        move(startrow + h.numscores+2, startcol-5);
+        printw("Press <b> to return to the main menu");
+
+}

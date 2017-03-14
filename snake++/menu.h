@@ -1,28 +1,30 @@
-#include <iostream>
 #include <vector>
 #include <ncurses.h>
 #include <cstdlib>
 #include <unistd.h>
+#include <string.h>
+#include "highscore.h"
+#include "snake.h"
 
 #ifndef MENU_H
 #define MENU_H
 
+
 class menuclass{
-        int points,del;
-        //indicates that the snake get food (it makes the snake longer)
-        bool get;
-        //indicates the current direction of the snake
+
+        snakeclass s;
         char input;
-	bool instructionOpen;
+        bool submenuOpen;
         int maxwidth;
         int maxheight;
-        char partchar;
-        char oldalchar;
-        char etel;
-        void getInput();
+
+        highscore h;
+        std::vector<scores> highscores;
+
         void title();
         void readInstruction();
         void mainInstruction();
+        void highScore();
 public:
         menuclass();
         ~menuclass();
